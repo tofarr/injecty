@@ -8,4 +8,4 @@ class Square(ShapeABC):
     length: float
 
     def get_area(self):
-        return self.length ** 2
+        return self.length**2

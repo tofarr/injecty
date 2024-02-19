@@ -20,7 +20,7 @@ This is what injecty is for!
 
 ## Example
 
-Suppose you have a task to process lists containing hashes representing 2D shapes and calculate the area of each:
+Take the task of processing lists containing hashes representing 2D shapes and calculate the area of each:
 
 ```
 [

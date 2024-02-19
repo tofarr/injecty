@@ -11,5 +11,4 @@ def parse_shape(shape_dict: Dict) -> ShapeABC:
     for impl in impls:
         if impl.__name__ == shape_type:
             return impl(**shape_dict)
-    raise ValueError(f'no_implementation_for:{shape_type}')
-
+    raise ValueError(f"no_implementation_for:{shape_type}")
