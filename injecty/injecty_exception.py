@@ -1,0 +1,2 @@
+class ImplException(Exception):
+    pass
