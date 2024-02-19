@@ -122,7 +122,7 @@ def create_injecty_context(config_module_prefix: str = _CONFIG_MODULE_PREFIX):
         m for m in pkgutil.iter_modules() if m.name.startswith(config_module_prefix)
     )
     modules = [importlib.import_module(m.name) for m in module_info]
-    modules.sort(key=lambda m: m.priority, reverse=True)
+    modules.sort(key=lambda m: m.priority, reverse=False)
     for m in modules:
         getattr(m, "configure")(context)
     return context
