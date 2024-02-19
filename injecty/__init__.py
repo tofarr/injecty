@@ -1,4 +1,4 @@
-from typing import Type, Optional, Callable, Any, List
+from typing import Type, Optional, Callable, Any, List, Dict
 
 from injecty.injecty_context import InjectyContext, create_injecty_context, T
 
@@ -16,33 +16,45 @@ def get_impls(
     base: Type[T],
     sort_key: Optional[Callable[[Type[T]], Any]] = None,
     reverse: bool = False,
+    permit_no_impl: bool = False,
 ) -> List[Type]:
     context = get_default_context()
-    impls = context.get_impls(base, sort_key, reverse)
+    impls = context.get_impls(base, sort_key, reverse, permit_no_impl)
     return impls
 
 
-def get_instances(base: Type[T]) -> List[T]:
+def get_instances(
+    base: Type[T],
+    sort_key: Optional[Callable[[Type[T]], Any]] = None,
+    reverse: bool = False,
+    kwargs: Optional[Dict] = None,
+    permit_no_impl: bool = False,
+) -> List[T]:
     context = get_default_context()
-    impls = context.get_instances(base)
-    return impls
+    instances = context.get_instances(base, sort_key, reverse, kwargs, permit_no_impl)
+    return instances
 
 
 def get_default_impl(
     base: Type[T],
     sort_key: Optional[Callable[[Type[T]], Any]] = None,
     reverse: bool = False,
+    permit_no_impl: bool = False,
 ) -> Type:
     context = get_default_context()
-    impl = context.get_default_impl(base, sort_key, reverse)
-    return impl
+    impl_ = context.get_default_impl(base, sort_key, reverse, permit_no_impl)
+    return impl_
 
 
-def get_default_instance(
+def get_new_default_instance(
     base: Type[T],
     sort_key: Optional[Callable[[Type[T]], Any]] = None,
     reverse: bool = False,
-) -> Type:
+    kwargs: Optional[Dict] = None,
+    permit_no_impl: bool = False,
+) -> T:
     context = get_default_context()
-    impl = context.get_default_impl(base, sort_key, reverse)
-    return impl
+    instance = context.get_new_default_instance(
+        base, sort_key, reverse, kwargs, permit_no_impl
+    )
+    return instance

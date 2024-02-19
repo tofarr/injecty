@@ -13,8 +13,6 @@ from typing import (
     get_type_hints,
 )
 
-from injecty.injecty_exception import ImplException
-
 _CONFIG_MODULE_PREFIX = "injecty_config"
 T = TypeVar("T")
 
@@ -57,10 +55,14 @@ class InjectyContext:
         base: Type[T],
         sort_key: Optional[Callable[[Type[T]], Any]] = None,
         reverse: bool = False,
+        permit_no_impl: bool = False,
     ) -> List[Type]:
         impls = self._impls.get(base)
         if not impls:
-            raise ImplException(base)
+            if permit_no_impl:
+                return []
+            else:
+                raise ValueError(f"no_implementation_for:{base}")
         result = list(impls)
         if sort_key is None:
             priority = get_type_hints(base).get("priority", None)
@@ -78,22 +80,40 @@ class InjectyContext:
         base: Type[T],
         sort_key: Optional[Callable[[Type[T]], Any]] = None,
         reverse: bool = False,
+        permit_no_impl: bool = False,
     ) -> Type:
-        result = self.get_impls(base, sort_key, reverse)[0]
-        return result
+        impls = self.get_impls(base, sort_key, reverse, permit_no_impl)
+        if impls:
+            return impls[0]
 
-    def get_instances(self, base: Type[T], **kwargs) -> List[T]:
-        impls = self._impls.get(base)
-        if not impls:
-            raise ImplException(base)
+    def get_instances(
+        self,
+        base: Type[T],
+        sort_key: Optional[Callable[[Type[T]], Any]] = None,
+        reverse: bool = False,
+        kwargs: Optional[Dict] = None,
+        permit_no_impl: bool = False,
+    ) -> List[T]:
+        if kwargs is None:
+            kwargs = {}
+        impls = self.get_impls(base, sort_key, reverse, permit_no_impl)
         result = [impl(**kwargs) for impl in impls]
-        if getattr(base, "__lt__", None):
-            result.sort()
         return result
 
-    def get_default_instance(self, base: Type[T], **kwargs) -> T:
-        result = self.get_instances(base, **kwargs)[0]
-        return result
+    def get_new_default_instance(
+        self,
+        base: Type[T],
+        sort_key: Optional[Callable[[Type[T]], Any]] = None,
+        reverse: bool = False,
+        kwargs: Optional[Dict] = None,
+        permit_no_impl: bool = False,
+    ) -> T:
+        if kwargs is None:
+            kwargs = {}
+        impls = self.get_impls(base, sort_key, reverse, permit_no_impl)
+        if impls:
+            result = impls[0](**kwargs)
+            return result
 
 
 def create_injecty_context(config_module_prefix: str = _CONFIG_MODULE_PREFIX):
