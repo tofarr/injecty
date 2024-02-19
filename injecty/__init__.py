@@ -6,6 +6,7 @@ _DEFAULT_CONTEXT = None
 
 
 def get_default_context():
+    # pylint: disable=W0603
     global _DEFAULT_CONTEXT
     if _DEFAULT_CONTEXT is None:
         _DEFAULT_CONTEXT = create_injecty_context()

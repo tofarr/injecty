@@ -61,8 +61,7 @@ class InjectyContext:
         if not impls:
             if permit_no_impl:
                 return []
-            else:
-                raise ValueError(f"no_implementation_for:{base}")
+            raise ValueError(f"no_implementation_for:{base}")
         result = list(impls)
         if sort_key is None:
             priority = get_type_hints(base).get("priority", None)
@@ -86,6 +85,7 @@ class InjectyContext:
         if impls:
             return impls[0]
 
+    # pylint: disable=R0913
     def get_instances(
         self,
         base: Type[T],
@@ -100,6 +100,7 @@ class InjectyContext:
         result = [impl(**kwargs) for impl in impls]
         return result
 
+    # pylint: disable=R0913
     def get_new_default_instance(
         self,
         base: Type[T],
