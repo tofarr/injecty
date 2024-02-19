@@ -22,7 +22,7 @@ extras_require["all"] = list(
 
 
 setuptools.setup(
-    name="xsd2-json-schemey",
+    name="injecty",
     author="Tim O'Farrell",
     author_email="tofarr@gmail.com",
     description="A converter for XSD to JsonSchema",
