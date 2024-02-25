@@ -19,16 +19,16 @@ T = TypeVar("T")
 
 @dataclass
 class InjectyContext:
-    _impls: Dict[Type[T], Set[Type[T]]] = field(default_factory=dict)
+    impls: Dict[Type[T], Set[Type[T]]] = field(default_factory=dict)
 
     def register_impl(
         self, base: Type[T], impl: Type[T], check_type: bool = True
     ) -> bool:
         if check_type and not issubclass(impl, base):
             raise TypeError(impl)
-        impls = self._impls.get(base)
+        impls = self.impls.get(base)
         if not impls:
-            impls = self._impls[base] = set()
+            impls = self.impls[base] = set()
         if impl in impls:
             return False
         impls.add(impl)
@@ -43,7 +43,7 @@ class InjectyContext:
         return result
 
     def deregister_impl(self, base: Type[T], impl: Type[T]) -> bool:
-        impls = self._impls.get(base)
+        impls = self.impls.get(base)
         if impls:
             if impl in impls:
                 impls.remove(impl)
@@ -57,7 +57,7 @@ class InjectyContext:
         reverse: bool = False,
         permit_no_impl: bool = False,
     ) -> List[Type]:
-        impls = self._impls.get(base)
+        impls = self.impls.get(base)
         if not impls:
             if permit_no_impl:
                 return []
