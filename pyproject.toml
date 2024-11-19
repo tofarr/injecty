@@ -1,0 +1,29 @@
+[tool.poetry]
+name = "injecty"
+version = "0.1.0"  # We'll use poetry's version management instead of git versioning
+description = "A converter for XSD to JsonSchema"
+authors = ["Tim O'Farrell <tofarr@gmail.com>"]
+readme = "README.md"
+packages = [{include = "injecty"}]
+exclude = ["tests*", "examples"]
+repository = "https://github.com/tofarr/servey-stub"
+license = "MIT"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[tool.poetry.dependencies]
+python = "^3.8"  # Setting a reasonable Python version requirement
+
+[tool.poetry.group.dev.dependencies]
+black = "~23.3"
+pytest = "~7.2"
+pytest-cov = "~4.0"
+pytest-xdist = "~3.2"
+pylint = "~3.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
