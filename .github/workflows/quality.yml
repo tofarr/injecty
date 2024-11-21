@@ -11,10 +11,14 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: "3.X"
-      - name: Install black
-        run: python -m pip install --upgrade pip black
+      - name: Install Poetry
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 -
+          poetry config virtualenvs.create false
+      - name: Install dependencies
+        run: poetry install
       - name: black
-        run: black . --check
+        run: poetry run black . --check
 
   coverage:
     runs-on: ubuntu-latest
@@ -24,10 +28,14 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: "3.X"
-      - name: Install pytest code coverage
-        run: python -m pip install ".[dev]"
+      - name: Install Poetry
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 -
+          poetry config virtualenvs.create false
+      - name: Install dependencies
+        run: poetry install
       - name: testcoverage
-        run: python -m pytest -n auto --cov-report=term-missing --cov=tests --cov=injecty --cov-fail-under=100
+        run: poetry run pytest -n auto --cov-report=term-missing --cov=tests --cov=injecty --cov-fail-under=100
 
   pylint:
     runs-on: ubuntu-latest
@@ -37,7 +45,11 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: "3.X"
-      - name: Install pylint
-        run: python -m pip install ".[dev]"
+      - name: Install Poetry
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 -
+          poetry config virtualenvs.create false
+      - name: Install dependencies
+        run: poetry install
       - name: lint
-        run: pylint injecty
+        run: poetry run pylint injecty
