@@ -16,10 +16,11 @@ jobs:
         with:
           python-version: "3.X"
       - name: Install Poetry
-        run: |
-          curl -sSL https://install.python-poetry.org | python3 -
-          poetry self add "poetry-dynamic-versioning[plugin]" -
-          poetry config pypi-token.pypi ${{ secrets.PYPI_API_TOKEN }}
+        run: curl -sSL https://install.python-poetry.org | python3
+      - name: Install Poetry Dynamic Versioning
+        run: poetry self add "poetry-dynamic-versioning[plugin]"
+      - name: Set PYPI Token
+        run: poetry config pypi-token.pypi ${{ secrets.PYPI_API_TOKEN }}
       - name: Install dependencies
         run: poetry install
       - name: Build package
