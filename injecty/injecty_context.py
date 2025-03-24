@@ -1,14 +1,10 @@
 import importlib
 import pkgutil
 from dataclasses import dataclass, field
+from types import ModuleType
 from typing import (
-    Dict,
-    Type,
-    Set,
-    List,
-    Callable,
-    Optional,
     Any,
+    Callable,
     TypeVar,
     get_type_hints,
 )
@@ -25,10 +21,10 @@ class InjectyContext:
     The InjectyContext maintains a registry of implementation classes for base classes
     and provides methods to register, deregister, and retrieve implementations.
     """
-    impls: Dict[Type[T], Set[Type[T]]] = field(default_factory=dict)
+    impls: dict[type[T], set[type[T]]] = field(default_factory=dict)
 
     def register_impl(
-        self, base: Type[T], impl: Type[T], check_type: bool = True
+        self, base: type[T], impl: type[T], check_type: bool = True
     ) -> bool:
         """
         Register an implementation class for a base class.
@@ -55,14 +51,14 @@ class InjectyContext:
         return True
 
     def register_impls(
-        self, base: Type[T], impls: List[Type[T]], check_type: bool = True
+        self, base: type[T], impls: list[type[T]], check_type: bool = True
     ) -> bool:
         """
         Register multiple implementation classes for a base class.
         
         Args:
             base: The base class
-            impls: List of implementation classes
+            impls: list of implementation classes
             check_type: If True, verify that each impl is a subclass of base
             
         Returns:
@@ -73,7 +69,7 @@ class InjectyContext:
             result &= self.register_impl(base, impl, check_type)
         return result
 
-    def deregister_impl(self, base: Type[T], impl: Type[T]) -> bool:
+    def deregister_impl(self, base: type[T], impl: type[T]) -> bool:
         """
         Deregister an implementation class for a base class.
         
@@ -93,11 +89,11 @@ class InjectyContext:
 
     def get_impls(
         self,
-        base: Type[T],
-        sort_key: Optional[Callable[[Type[T]], Any]] = None,
+        base: type[T],
+        sort_key: Callable[[type[T]], Any] | None = None,
         reverse: bool = False,
         permit_no_impl: bool = False,
-    ) -> List[Type[T]]:
+    ) -> list[type[T]]:
         """
         Get all registered implementations of a base class.
         
@@ -136,11 +132,11 @@ class InjectyContext:
 
     def get_default_impl(
         self,
-        base: Type[T],
-        sort_key: Optional[Callable[[Type[T]], Any]] = None,
+        base: type[T],
+        sort_key: Callable[[type[T]], Any] | None = None,
         reverse: bool = False,
         permit_no_impl: bool = False,
-    ) -> Optional[Type[T]]:
+    ) -> type[T] | None:
         """
         Get the default implementation of a base class.
         
@@ -167,12 +163,12 @@ class InjectyContext:
     # pylint: disable=R0913
     def get_instances(
         self,
-        base: Type[T],
-        sort_key: Optional[Callable[[Type[T]], Any]] = None,
+        base: type[T],
+        sort_key: Callable[[type[T]], Any] | None = None,
         reverse: bool = False,
-        kwargs: Optional[Dict] = None,
+        kwargs: dict | None = None,
         permit_no_impl: bool = False,
-    ) -> List[T]:
+    ) -> list[T]:
         """
         Get instances of all registered implementations of a base class.
         
@@ -199,12 +195,12 @@ class InjectyContext:
     # pylint: disable=R0913
     def get_new_default_instance(
         self,
-        base: Type[T],
-        sort_key: Optional[Callable[[Type[T]], Any]] = None,
+        base: type[T],
+        sort_key: Callable[[type[T]], Any] | None = None,
         reverse: bool = False,
-        kwargs: Optional[Dict] = None,
+        kwargs: dict | None = None,
         permit_no_impl: bool = False,
-    ) -> Optional[T]:
+    ) -> T | None:
         """
         Create a new instance of the default implementation of a base class.
         
@@ -231,7 +227,7 @@ class InjectyContext:
         return None
 
 
-def get_config_modules(config_module_prefix: str = _CONFIG_MODULE_PREFIX) -> List:
+def get_config_modules(config_module_prefix: str = _CONFIG_MODULE_PREFIX) -> list[ModuleType]:
     """
     Discover and load all configuration modules matching the specified prefix.
     
@@ -260,7 +256,7 @@ def get_config_modules(config_module_prefix: str = _CONFIG_MODULE_PREFIX) -> Lis
     return modules
 
 
-def create_injecty_context(config_module_prefix: str = _CONFIG_MODULE_PREFIX):
+def create_injecty_context(config_module_prefix: str = _CONFIG_MODULE_PREFIX) -> InjectyContext:
     """
     Create and initialize a new InjectyContext with all discovered configuration modules.
     

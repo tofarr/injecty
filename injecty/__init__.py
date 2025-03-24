@@ -1,4 +1,7 @@
-from typing import Type, Optional, Callable, Any, List, Dict
+from types import ModuleType
+from typing import Any, Callable, TypeVar
+
+T = TypeVar("T")
 
 from injecty.injecty_context import (
     InjectyContext, 
@@ -10,7 +13,7 @@ from injecty.injecty_context import (
 _DEFAULT_CONTEXT = None
 
 
-def get_default_injecty_context():
+def get_default_injecty_context() -> InjectyContext:
     """
     Get or create the default InjectyContext.
     
@@ -27,11 +30,11 @@ def get_default_injecty_context():
 
 
 def get_impls(
-    base: Type[T],
-    sort_key: Optional[Callable[[Type[T]], Any]] = None,
+    base: type[T],
+    sort_key: Callable[[type[T]], Any] | None = None,
     reverse: bool = False,
     permit_no_impl: bool = False,
-) -> List[Type[T]]:
+) -> list[type[T]]:
     """
     Get all registered implementations of the specified base class.
     
@@ -54,12 +57,12 @@ def get_impls(
 
 
 def get_instances(
-    base: Type[T],
-    sort_key: Optional[Callable[[Type[T]], Any]] = None,
+    base: type[T],
+    sort_key: Callable[[type[T]], Any] | None = None,
     reverse: bool = False,
-    kwargs: Optional[Dict] = None,
+    kwargs: dict | None = None,
     permit_no_impl: bool = False,
-) -> List[T]:
+) -> list[T]:
     """
     Get instances of all registered implementations of the specified base class.
     
@@ -83,11 +86,11 @@ def get_instances(
 
 
 def get_default_impl(
-    base: Type[T],
-    sort_key: Optional[Callable[[Type[T]], Any]] = None,
+    base: type[T],
+    sort_key: Callable[[type[T]], Any] | None = None,
     reverse: bool = False,
     permit_no_impl: bool = False,
-) -> Type[T]:
+) -> type[T] | None:
     """
     Get the default implementation of the specified base class.
     
@@ -112,12 +115,12 @@ def get_default_impl(
 
 
 def get_new_default_instance(
-    base: Type[T],
-    sort_key: Optional[Callable[[Type[T]], Any]] = None,
+    base: type[T],
+    sort_key: Callable[[type[T]], Any] | None = None,
     reverse: bool = False,
-    kwargs: Optional[Dict] = None,
+    kwargs: dict | None = None,
     permit_no_impl: bool = False,
-) -> T:
+) -> T | None:
     """
     Create a new instance of the default implementation of the specified base class.
     
