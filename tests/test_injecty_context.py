@@ -54,6 +54,11 @@ class TestInjectyContext(TestCase):
         self.assertFalse(context.deregister_impl(Foo, Bar))
         impls = context.get_impls(Foo)
         self.assertEqual(impls, [Bang, Zap])
+        
+    def test_deregister_impl_no_impls_registered(self):
+        context = InjectyContext()
+        # Try to deregister an implementation for a class that has no registered implementations
+        self.assertFalse(context.deregister_impl(str, dict))
 
     def test_load_from_module(self):
         context = create_injecty_context("injecty_config_test")
