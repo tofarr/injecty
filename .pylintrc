@@ -441,6 +441,10 @@ disable=raw-checker-failed,
         W0718, # Saying, "If anything goes wrong, then do this, is a perfectly sane set of directions."
         W1514, # Platform specific encoding is fine
         R0801, # Duplicate checking is a bit off
+        E1131, # unsupported operand type(s) for | - Python 3.10 type union syntax
+        R1705, # Unnecessary "else" after "return"
+        R0917, # Too many positional arguments
+        C0413  # Import should be placed at the top of the module
 
 
 # Enable the message, report, category or checker with the given id(s). You can
