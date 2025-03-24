@@ -14,6 +14,14 @@ For the purpose of your library, you only need to implement part of the specific
 
 This is what injecty is for!
 
+## Architecture
+
+Injecty provides a flexible architecture for dependency injection with automatic discovery of implementations:
+
+![Injecty Architecture Diagram](docs/injecty_architecture.png)
+
+For a detailed explanation of the architecture and workflow, see the [Architecture Documentation](docs/architecture.md).
+
 ## Installation
 
 `pip install injecty`
