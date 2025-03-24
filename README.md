@@ -85,6 +85,32 @@ sort_key is given, Injecty examines the base class to see if there is an integer
 implementations in descending order. So in this case, simply by giving Rectangle a higher priority than Square, we
 would ensure that processing occurs correctly.
 
+## Logging
+
+Injecty includes comprehensive logging to help you understand what's happening during dependency resolution and instance creation. By default, logging is configured at the INFO level, but you can easily customize it:
+
+```python
+from injecty import configure_logging
+import logging
+
+# Configure logging with default settings (INFO level)
+configure_logging()
+
+# Or customize the logging level and format
+configure_logging(
+    level=logging.DEBUG,
+    format_str="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+)
+```
+
+The logs include information about:
+- Registration and deregistration of implementations
+- Discovery and loading of configuration modules
+- Implementation lookup and instance creation
+- Error conditions and edge cases
+
+This can be particularly helpful when debugging complex dependency injection scenarios or when extending the framework with custom implementations.
+
 ## Release Procedure
 
 ![status](https://github.com/tofarr/injecty/actions/workflows/quality.yml/badge.svg?branch=main)

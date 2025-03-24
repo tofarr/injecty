@@ -1,3 +1,4 @@
+import logging
 from types import ModuleType
 from typing import Any, Callable, TypeVar
 
@@ -9,6 +10,11 @@ from injecty.injecty_context import (
     get_config_modules,
     T,
 )
+
+from injecty.logging_config import configure_logging, get_logger
+
+# Configure logger
+logger = logging.getLogger(__name__)
 
 _DEFAULT_CONTEXT = None
 
@@ -25,7 +31,11 @@ def get_default_injecty_context() -> InjectyContext:
     # pylint: disable=W0603
     global _DEFAULT_CONTEXT
     if _DEFAULT_CONTEXT is None:
+        logger.info("Initializing default InjectyContext")
         _DEFAULT_CONTEXT = create_injecty_context()
+        logger.debug("Default InjectyContext initialized")
+    else:
+        logger.debug("Using existing default InjectyContext")
     return _DEFAULT_CONTEXT
 
 
@@ -51,8 +61,10 @@ def get_impls(
     Raises:
         ValueError: If no implementations found and permit_no_impl is False
     """
+    logger.debug("Getting implementations for %s", base.__name__)
     context = get_default_injecty_context()
     impls = context.get_impls(base, sort_key, reverse, permit_no_impl)
+    logger.debug("Found %d implementations for %s", len(impls), base.__name__)
     return impls
 
 
@@ -80,8 +92,10 @@ def get_instances(
     Raises:
         ValueError: If no implementations found and permit_no_impl is False
     """
+    logger.debug("Getting instances for %s", base.__name__)
     context = get_default_injecty_context()
     instances = context.get_instances(base, sort_key, reverse, kwargs, permit_no_impl)
+    logger.debug("Created %d instances for %s", len(instances), base.__name__)
     return instances
 
 
@@ -109,8 +123,15 @@ def get_default_impl(
     Raises:
         ValueError: If no implementations found and permit_no_impl is False
     """
+    logger.debug("Getting default implementation for %s", base.__name__)
     context = get_default_injecty_context()
     impl_ = context.get_default_impl(base, sort_key, reverse, permit_no_impl)
+    
+    if impl_:
+        logger.debug("Default implementation for %s is %s", base.__name__, impl_.__name__)
+    else:
+        logger.debug("No default implementation found for %s", base.__name__)
+        
     return impl_
 
 
@@ -138,8 +159,21 @@ def get_new_default_instance(
     Raises:
         ValueError: If no implementations found and permit_no_impl is False
     """
+    logger.debug("Creating new default instance for %s", base.__name__)
     context = get_default_injecty_context()
-    instance = context.get_new_default_instance(
-        base, sort_key, reverse, kwargs, permit_no_impl
-    )
-    return instance
+    
+    try:
+        instance = context.get_new_default_instance(
+            base, sort_key, reverse, kwargs, permit_no_impl
+        )
+        
+        if instance:
+            logger.debug("Created new instance of %s (type: %s)", 
+                       base.__name__, instance.__class__.__name__)
+        else:
+            logger.debug("No instance created for %s (no implementation available)", base.__name__)
+            
+        return instance
+    except Exception as e:
+        logger.error("Failed to create instance for %s: %s", base.__name__, str(e))
+        raise
