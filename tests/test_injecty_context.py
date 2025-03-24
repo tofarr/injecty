@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from injecty import InjectyContext, create_injecty_context
+from injecty import InjectyContext, create_injecty_context, get_config_modules
 from tests.models import Foo, Bar, Bang, Zap
 
 
@@ -94,3 +94,29 @@ class TestInjectyContext(TestCase):
         instances = [i.__class__ for i in context.get_instances(Foo)]
         expected = [Bang, Bar, Zap]
         self.assertEqual(instances, expected)
+        
+    def test_get_config_modules(self):
+        # Test with existing config modules
+        modules = get_config_modules("injecty_config_test")
+        self.assertTrue(len(modules) > 0)
+        
+        # Verify modules are sorted by priority
+        for i in range(1, len(modules)):
+            self.assertTrue(modules[i-1].priority <= modules[i].priority)
+            
+        # Verify each module has required attributes
+        for module in modules:
+            self.assertTrue(hasattr(module, "priority"))
+            self.assertTrue(hasattr(module, "configure"))
+            
+        # Test with non-existent prefix
+        modules = get_config_modules("non_existent_prefix")
+        self.assertEqual(len(modules), 0)
+        
+    def test_get_config_modules_validation(self):
+        # Test with modules missing required attributes
+        with self.assertRaises(AttributeError):
+            get_config_modules("test_config_no_pri")
+            
+        with self.assertRaises(AttributeError):
+            get_config_modules("test_config_no_con")

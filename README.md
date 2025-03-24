@@ -47,7 +47,23 @@ Injecty finds implementations using config modules. These are any top level modu
 `injecty_config_*` (e.g.: [injecty_config_shapes.py](injecty_config_shapes.py)). Each config module must have:
 * A configure method, which is used to register / deregister impls with a context.
 * A priority - this determines the order of processing, with higher numbers processed after lower ones, so they can
-* override / deregister impls if required
+  override / deregister impls if required
+
+You can inspect the discovered configuration modules using the `get_config_modules` function:
+
+```python
+from injecty import get_config_modules
+
+# Get all configuration modules with the default prefix "injecty_config"
+modules = get_config_modules()
+
+# Get configuration modules with a custom prefix
+custom_modules = get_config_modules("my_custom_config")
+
+# Modules are sorted by priority (lower priority modules are processed first)
+for module in modules:
+    print(f"Module: {module.__name__}, Priority: {module.priority}")
+```
 
 So in this example, the author of a program could add a dependency on this library and define their own processors 
 for any other shape (e.g.: [Rectangle](example/models/rectangle.py)) by defining their class and creating a config
