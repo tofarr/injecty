@@ -45,9 +45,19 @@ With injecty, your code for [a parser may look like this](example/shape_parser.p
 
 Injecty finds implementations using config modules. These are any top level module with a name matching
 `injecty_config_*` (e.g.: [injecty_config_shapes.py](injecty_config_shapes.py)). Each config module must have:
-* A configure method, which is used to register / deregister impls with a context.
-* A priority - this determines the order of processing, with higher numbers processed after lower ones, so they can
+* A configure method, which is used to register / deregister impls with a context. This method must accept an InjectyContext parameter.
+* A priority - this must be an integer that determines the order of processing, with higher numbers processed after lower ones, so they can
   override / deregister impls if required
+
+Injecty validates all configuration modules to ensure they meet these requirements. You can also manually validate a module using the `validate_config_module` function:
+
+```python
+from injecty import validate_config_module
+import my_config_module
+
+# Will raise an exception if the module doesn't meet the requirements
+validate_config_module(my_config_module)
+```
 
 You can inspect the discovered configuration modules using the `get_config_modules` function:
 

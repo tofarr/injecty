@@ -8,6 +8,7 @@ from injecty.injecty_context import (
     InjectyContext,
     create_injecty_context,
     get_config_modules,
+    validate_config_module,
     T,
 )
 

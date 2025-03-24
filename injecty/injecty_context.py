@@ -1,4 +1,5 @@
 import importlib
+import inspect
 import logging
 import pkgutil
 from dataclasses import dataclass, field
@@ -313,18 +314,14 @@ def get_config_modules(
 
     logger.info("Discovered %d configuration modules", len(modules))
 
-    # Validate modules have required attributes
+    # Validate all modules
     for module in modules:
-        if not hasattr(module, "priority"):
-            logger.error("Module '%s' missing required 'priority' attribute", module.__name__)
-            raise AttributeError(
-                f"Configuration module {module.__name__} missing required 'priority' attribute"
-            )
-        if not hasattr(module, "configure"):
-            logger.error("Module '%s' missing required 'configure' method", module.__name__)
-            raise AttributeError(
-                f"Configuration module {module.__name__} missing required 'configure' method"
-            )
+        try:
+            logger.debug("Validating configuration module '%s'", module.__name__)
+            validate_config_module(module)
+        except (AttributeError, TypeError, ValueError) as e:
+            logger.error("Validation failed for module '%s': %s", module.__name__, str(e))
+            raise
 
     # Sort modules by priority (lower priority modules are processed first)
     modules.sort(key=lambda m: m.priority, reverse=False)
@@ -355,7 +352,20 @@ def create_injecty_context(
         try:
             logger.debug("Configuring context with module '%s' (priority: %d)", 
                        module.__name__, module.priority)
-            module.configure(context)
+            
+            # Validate the module again before configuring (in case it was modified)
+            validate_config_module(module)
+            
+            # Call the configure method
+            result = module.configure(context)
+            
+            # Validate the result of configure (should be None)
+            if result is not None:
+                logger.warning(
+                    "Module '%s' 'configure' method returned a value (%s) when None was expected",
+                    module.__name__, type(result).__name__
+                )
+                
         except Exception as e:
             logger.error("Error configuring context with module '%s': %s", 
                         module.__name__, str(e))
@@ -363,6 +373,86 @@ def create_injecty_context(
 
     logger.info("Successfully initialized InjectyContext with %d modules", len(modules))
     return context
+
+
+def validate_config_module(module: ModuleType) -> None:
+    """
+    Validate that a module meets the requirements to be a configuration module.
+    
+    Configuration modules must have:
+    1. A 'priority' attribute that is an integer
+    2. A 'configure' function that accepts an InjectyContext parameter
+    
+    Args:
+        module: The module to validate
+        
+    Raises:
+        AttributeError: If the module is missing required attributes
+        TypeError: If the attributes are of the wrong type
+        ValueError: If the attributes have invalid values
+    """
+    module_name = module.__name__
+    
+    # Check for priority attribute
+    if not hasattr(module, "priority"):
+        logger.error("Module '%s' missing required 'priority' attribute", module_name)
+        raise AttributeError(
+            f"Configuration module {module_name} missing required 'priority' attribute"
+        )
+    
+    # Validate priority is an integer
+    if not isinstance(module.priority, int):
+        logger.error(
+            "Module '%s' has invalid 'priority' attribute: expected int, got %s",
+            module_name, type(module.priority).__name__
+        )
+        raise TypeError(
+            f"Configuration module {module_name} has invalid 'priority' attribute: "
+            f"expected int, got {type(module.priority).__name__}"
+        )
+    
+    # Check for configure function
+    if not hasattr(module, "configure"):
+        logger.error("Module '%s' missing required 'configure' method", module_name)
+        raise AttributeError(
+            f"Configuration module {module_name} missing required 'configure' method"
+        )
+    
+    # Validate configure is callable
+    if not callable(module.configure):
+        logger.error(
+            "Module '%s' has invalid 'configure' attribute: expected callable, got %s",
+            module_name, type(module.configure).__name__
+        )
+        raise TypeError(
+            f"Configuration module {module_name} has invalid 'configure' attribute: "
+            f"expected callable, got {type(module.configure).__name__}"
+        )
+    
+    # Validate configure function signature
+    sig = inspect.signature(module.configure)
+    parameters = list(sig.parameters.values())
+    
+    # Configure should have at least one parameter (for the context)
+    if len(parameters) < 1:
+        logger.error(
+            "Module '%s' has invalid 'configure' method: expected at least 1 parameter, got %d",
+            module_name, len(parameters)
+        )
+        raise ValueError(
+            f"Configuration module {module_name} has invalid 'configure' method: "
+            f"expected at least 1 parameter, got {len(parameters)}"
+        )
+    
+    # First parameter should accept InjectyContext
+    # We can't strictly type check here due to potential circular imports,
+    # but we can check if the parameter name suggests it's a context
+    first_param = parameters[0]
+    if first_param.name not in ('context', 'ctx', 'injecty_context'):
+        logger.warning(
+            "Module '%s' 'configure' method's first parameter name '%s' doesn't suggest it's a context",
+            module_name, first_param.name
+        )
 
 
 def _priority_sort_key(n):
