@@ -4,10 +4,10 @@ from typing import Any, Callable, TypeVar
 T = TypeVar("T")
 
 from injecty.injecty_context import (
-    InjectyContext, 
-    create_injecty_context, 
+    InjectyContext,
+    create_injecty_context,
     get_config_modules,
-    T
+    T,
 )
 
 _DEFAULT_CONTEXT = None
@@ -16,9 +16,9 @@ _DEFAULT_CONTEXT = None
 def get_default_injecty_context() -> InjectyContext:
     """
     Get or create the default InjectyContext.
-    
+
     The default context is created lazily on first access and cached for subsequent calls.
-    
+
     Returns:
         InjectyContext: The default context instance
     """
@@ -37,17 +37,17 @@ def get_impls(
 ) -> list[type[T]]:
     """
     Get all registered implementations of the specified base class.
-    
+
     Args:
         base: The base class to find implementations for
         sort_key: Optional function to sort implementations
         reverse: Whether to reverse the sort order
         permit_no_impl: If True, returns empty list when no implementations found;
                         if False, raises ValueError
-    
+
     Returns:
         List of implementation classes
-        
+
     Raises:
         ValueError: If no implementations found and permit_no_impl is False
     """
@@ -65,7 +65,7 @@ def get_instances(
 ) -> list[T]:
     """
     Get instances of all registered implementations of the specified base class.
-    
+
     Args:
         base: The base class to find implementations for
         sort_key: Optional function to sort implementations
@@ -73,10 +73,10 @@ def get_instances(
         kwargs: Optional dictionary of keyword arguments to pass to constructors
         permit_no_impl: If True, returns empty list when no implementations found;
                         if False, raises ValueError
-    
+
     Returns:
         List of instances of the implementation classes
-        
+
     Raises:
         ValueError: If no implementations found and permit_no_impl is False
     """
@@ -93,19 +93,19 @@ def get_default_impl(
 ) -> type[T] | None:
     """
     Get the default implementation of the specified base class.
-    
+
     The default implementation is the first one after sorting.
-    
+
     Args:
         base: The base class to find implementations for
         sort_key: Optional function to sort implementations
         reverse: Whether to reverse the sort order
         permit_no_impl: If True, returns None when no implementations found;
                         if False, raises ValueError
-    
+
     Returns:
         The default implementation class
-        
+
     Raises:
         ValueError: If no implementations found and permit_no_impl is False
     """
@@ -123,7 +123,7 @@ def get_new_default_instance(
 ) -> T | None:
     """
     Create a new instance of the default implementation of the specified base class.
-    
+
     Args:
         base: The base class to find implementations for
         sort_key: Optional function to sort implementations
@@ -131,10 +131,10 @@ def get_new_default_instance(
         kwargs: Optional dictionary of keyword arguments to pass to constructor
         permit_no_impl: If True, returns None when no implementations found;
                         if False, raises ValueError
-    
+
     Returns:
         A new instance of the default implementation
-        
+
     Raises:
         ValueError: If no implementations found and permit_no_impl is False
     """

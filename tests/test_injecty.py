@@ -21,3 +21,8 @@ class TestInjecty(TestCase):
     def test_get_new_default_instance(self):
         instance = get_new_default_instance(Foo)
         self.assertIsInstance(instance, Bang)
+        
+    def test_get_new_default_instance_no_impl(self):
+        # Test with a class that has no implementations
+        instance = get_new_default_instance(str, permit_no_impl=True)
+        self.assertIsNone(instance)
