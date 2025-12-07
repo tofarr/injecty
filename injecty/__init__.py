@@ -2,6 +2,12 @@ from typing import Type, Optional, Callable, Any, List, Dict
 
 from injecty.injecty_context import InjectyContext, create_injecty_context, T
 
+try:
+    from ._version import __version__
+except ImportError:
+    # Fallback for development
+    __version__ = "0.0.0"
+
 _DEFAULT_CONTEXT = None
 
 
