@@ -85,7 +85,7 @@ class InjectyContext:
         if impls:
             return impls[0]
 
-    # pylint: disable=R0913
+    # pylint: disable=R0913,R0917
     def get_instances(
         self,
         base: Type[T],
@@ -100,7 +100,7 @@ class InjectyContext:
         result = [impl(**kwargs) for impl in impls]
         return result
 
-    # pylint: disable=R0913
+    # pylint: disable=R0913,R0917
     def get_new_default_instance(
         self,
         base: Type[T],
