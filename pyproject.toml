@@ -1,6 +1,6 @@
 [project]
 name = "injecty"
-dynamic = ["version"]
+version = "0.0.0"  # This will be replaced by the release workflow
 description = "A simple IOC / Dependency injection micro framework for Python."
 authors = [
     {name = "Tim O'Farrell", email = "tofarr@gmail.com"}

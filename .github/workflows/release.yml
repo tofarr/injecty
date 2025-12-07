@@ -27,7 +27,7 @@ jobs:
           VERSION=$(git describe --tags --exact-match 2>/dev/null | sed 's/^v//')
           echo "Setting version to: $VERSION"
           # Update pyproject.toml with the actual version
-          sed -i "s/dynamic = \[\"version\"\]/version = \"$VERSION\"/" pyproject.toml
+          sed -i "s/version = \"0.0.0\"  # This will be replaced by the release workflow/version = \"$VERSION\"/" pyproject.toml
           # Verify the change
           grep "version = " pyproject.toml
       - name: Build package
