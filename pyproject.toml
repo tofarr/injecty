@@ -35,6 +35,20 @@ build-backend = "setuptools.build_meta"
 write_to = "injecty/_version.py"
 local_scheme = "no-local-version"
 
+[tool.black]
+exclude = '''
+/(
+    \.venv
+    | \.git
+    | \.tox
+    | \.eggs
+    | \.pytest_cache
+    | build
+    | dist
+    | injecty/_version\.py
+)/
+'''
+
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["injecty*"]
