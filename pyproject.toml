@@ -1,6 +1,6 @@
 [project]
 name = "injecty"
-version = "0.0.0"  # Placeholder - actual version will be determined from git tags
+dynamic = ["version"]
 description = "A simple IOC / Dependency injection micro framework for Python."
 authors = [
     {name = "Tim O'Farrell", email = "tofarr@gmail.com"}
@@ -28,14 +28,17 @@ dev = [
 ]
 
 [build-system]
-requires = ["hatchling", "hatch-vcs"]
+requires = ["hatchling"]
 build-backend = "hatchling.build"
-
-[tool.hatch.version]
-source = "vcs"
 
 [tool.hatch.build.targets.wheel]
 packages = ["injecty"]
 
 [tool.hatch.build.targets.sdist]
 exclude = ["tests*", "examples"]
+
+[dependency-groups]
+dev = [
+    "hatch-vcs>=0.5.0",
+    "hatchling>=1.28.0",
+]
