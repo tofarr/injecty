@@ -18,7 +18,7 @@ jobs:
       - name: Install dependencies
         run: uv sync --extra dev
       - name: black
-        run: uv run black . --check
+        run: uv run black injecty tests *.py --check --exclude="injecty/_version.py"
 
   coverage:
     runs-on: ubuntu-latest
