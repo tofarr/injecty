@@ -101,6 +101,49 @@ class TestVersion(unittest.TestCase):
             # (fallback should handle this case)
             self.assertEqual(injecty.__version__, "0.0.0")
 
+    def test_import_error_fallback_direct(self):
+        """Test ImportError fallback directly to ensure coverage."""
+        import sys
+        import importlib
+
+        # Save original modules
+        original_injecty = sys.modules.get("injecty")
+        original_version = sys.modules.get("injecty._version")
+
+        try:
+            # Remove modules from cache
+            if "injecty" in sys.modules:
+                del sys.modules["injecty"]
+            if "injecty._version" in sys.modules:
+                del sys.modules["injecty._version"]
+
+            # Mock the _version module to not exist
+            with patch.dict("sys.modules", {"injecty._version": None}):
+                # Import injecty fresh - this should trigger the ImportError fallback
+                import injecty as test_injecty  # pylint: disable=reimported
+
+                # The fallback should set version to "0.0.0"
+                self.assertEqual(test_injecty.__version__, "0.0.0")
+
+        finally:
+            # Restore original state
+            if original_injecty is not None:
+                sys.modules["injecty"] = original_injecty
+            elif "injecty" in sys.modules:
+                del sys.modules["injecty"]
+
+            if original_version is not None:
+                sys.modules["injecty._version"] = original_version
+            elif "injecty._version" in sys.modules:
+                del sys.modules["injecty._version"]
+
+            # Re-import to restore normal state if module exists
+            if "injecty" in sys.modules:
+                importlib.reload(sys.modules["injecty"])
+            else:
+                # Just import normally to restore state
+                import injecty  # pylint: disable=reimported,unused-import,redefined-outer-name
+
 
 if __name__ == "__main__":
     unittest.main()
